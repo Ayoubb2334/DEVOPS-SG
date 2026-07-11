@@ -1,0 +1,34 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Liste des smartphones</h2>
+  <button pButton type="button" label="Ajouter" icon="pi pi-plus" (click)="onAdd()"></button>
+</div>
+
+<p-table [value]="smartphones" [loading]="loading" [paginator]="true" [rows]="10" responsiveLayout="scroll">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Marque</th>
+      <th>Modèle</th>
+      <th>Prix</th>
+      <th>Stock</th>
+      <th style="width: 120px">Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-smartphone>
+    <tr>
+      <td>{{ smartphone.marque }}</td>
+      <td>{{ smartphone.modele }}</td>
+      <td>{{ smartphone.prix | number:'1.2-2' }} €</td>
+      <td>{{ smartphone.stock }}</td>
+      <td>
+        <button pButton icon="pi pi-pencil" class="p-button-sm p-button-text me-1" (click)="onEdit(smartphone.id)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-sm p-button-text p-button-danger" (click)="onDelete(smartphone)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr><td colspan="5" class="text-center">Aucun smartphone enregistré.</td></tr>
+  </ng-template>
+</p-table>

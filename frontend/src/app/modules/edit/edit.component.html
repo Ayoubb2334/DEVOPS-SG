@@ -1,0 +1,35 @@
+<p-toast></p-toast>
+
+<h2 class="mb-4">Modifier le smartphone</h2>
+
+<form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="row g-3" style="max-width: 600px;">
+  <div class="col-12">
+    <label class="form-label">Marque *</label>
+    <input pInputText formControlName="marque" class="w-100" />
+  </div>
+
+  <div class="col-12">
+    <label class="form-label">Modèle *</label>
+    <input pInputText formControlName="modele" class="w-100" />
+  </div>
+
+  <div class="col-6">
+    <label class="form-label">Prix (€) *</label>
+    <p-inputNumber formControlName="prix" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" styleClass="w-100"></p-inputNumber>
+  </div>
+
+  <div class="col-6">
+    <label class="form-label">Stock *</label>
+    <p-inputNumber formControlName="stock" styleClass="w-100"></p-inputNumber>
+  </div>
+
+  <div class="col-12">
+    <label class="form-label">Description</label>
+    <textarea pInputTextarea formControlName="description" class="w-100" rows="3"></textarea>
+  </div>
+
+  <div class="col-12 d-flex gap-2 mt-2">
+    <button pButton type="submit" label="Mettre à jour" icon="pi pi-check" [disabled]="submitting"></button>
+    <button pButton type="button" label="Annuler" class="p-button-secondary" (click)="onCancel()"></button>
+  </div>
+</form>
