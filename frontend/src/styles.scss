@@ -1,1 +1,293 @@
-/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.min.css";
+@import "primeicons/primeicons.css";
+
+:root {
+  --bg: #10121c;
+  --surface: #191c2a;
+  --surface-2: #222639;
+  --surface-3: #2b3049;
+  --border: #2a2f45;
+  --text: #edeef7;
+  --text-muted: #8b90ac;
+  --accent: #6c5df0;
+  --accent-soft: #8b7bff;
+  --accent-2: #22d3c5;
+  --danger: #ff5c7a;
+  --success: #22d3c5;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(108,93,240,0.12), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(34,211,197,0.08), transparent 60%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .navbar-brand {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+::selection { background: rgba(108, 93, 240, 0.35); color: #fff; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: 10px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Focus visible (accessibilité) */
+a:focus-visible, button:focus-visible, input:focus-visible, .p-button:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+/* ---------- Animations globales ---------- */
+
+@keyframes screenWake {
+  0%   { opacity: 0; transform: scale(0.97); filter: brightness(0.7); }
+  60%  { filter: brightness(1.15); }
+  100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108, 93, 240, 0.35); }
+  50%      { box-shadow: 0 0 0 8px rgba(108, 93, 240, 0); }
+}
+
+@keyframes signalRise {
+  from { transform: scaleY(0.3); opacity: 0.4; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes shine {
+  from { transform: translateX(-120%) skewX(-15deg); }
+  to   { transform: translateX(220%) skewX(-15deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Boutons PrimeNG ---------- */
+
+.p-button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  border-radius: var(--radius-sm) !important;
+  border: none !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.p-button:not(.p-button-text):not(.p-button-outlined) {
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft)) !important;
+  box-shadow: 0 4px 16px rgba(108, 93, 240, 0.35);
+}
+
+.p-button:not(.p-button-text):not(.p-button-outlined)::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: translateX(-120%) skewX(-15deg);
+}
+
+.p-button:not(.p-button-text):not(.p-button-outlined):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(108, 93, 240, 0.5);
+}
+.p-button:not(.p-button-text):not(.p-button-outlined):hover::after {
+  animation: shine 0.7s ease forwards;
+}
+.p-button:not(.p-button-text):not(.p-button-outlined):active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.p-button-danger:not(.p-button-text) {
+  background: linear-gradient(135deg, var(--danger), #ff8fa3) !important;
+  box-shadow: 0 4px 16px rgba(255, 92, 122, 0.35) !important;
+}
+
+.p-button-text {
+  color: var(--text-muted) !important;
+  background: transparent !important;
+}
+.p-button-text:not(:disabled):hover {
+  background: var(--surface-2) !important;
+  color: var(--text) !important;
+  transform: translateY(-1px);
+}
+.p-button-text.p-button-danger:hover {
+  background: rgba(255, 92, 122, 0.12) !important;
+  color: var(--danger) !important;
+}
+
+.p-button-secondary {
+  background: transparent !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+.p-button-secondary:hover {
+  border-color: var(--accent) !important;
+  background: var(--surface-2) !important;
+  transform: translateY(-1px);
+}
+
+.p-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+/* ---------- Table PrimeNG ---------- */
+
+.p-datatable { background: transparent; font-family: var(--font-body); }
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  border-color: var(--border) !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.9rem 1rem;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-bottom: 1px solid var(--border) !important;
+  transition: background 0.2s ease, transform 0.2s ease;
+  animation: fadeUp 0.4s ease backwards;
+}
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--surface-2) !important;
+  transform: translateX(3px);
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--border) !important;
+  padding: 0.85rem 1rem;
+}
+
+.p-paginator {
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  border: none !important;
+}
+.p-paginator .p-paginator-page,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-last {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-muted) !important;
+  border-radius: 8px !important;
+  margin: 0 2px;
+  transition: all 0.2s ease;
+}
+.p-paginator .p-paginator-page:hover { border-color: var(--accent) !important; color: var(--text) !important; }
+.p-paginator .p-paginator-page.p-highlight {
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft)) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* ---------- Inputs ---------- */
+
+.p-inputtext, .p-inputnumber-input, textarea.p-inputtextarea, input[pInputText] {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 0.6rem 0.85rem !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.p-inputtext::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+.p-inputtext:hover, .p-inputnumber-input:hover, textarea.p-inputtextarea:hover {
+  border-color: var(--surface-3) !important;
+}
+.p-inputtext:focus, .p-inputnumber-input:focus, textarea.p-inputtextarea:focus {
+  border-color: var(--accent) !important;
+  background: var(--surface) !important;
+  box-shadow: 0 0 0 3px rgba(108, 93, 240, 0.2) !important;
+}
+.p-inputnumber { width: 100%; }
+
+.form-label {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.4rem;
+}
+
+/* ---------- Toast ---------- */
+.p-toast .p-toast-message {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4) !important;
+}
+.p-toast .p-toast-message-success { border-left: 4px solid var(--success) !important; }
+.p-toast .p-toast-message-error { border-left: 4px solid var(--danger) !important; }
+
+/* ---------- Confirm dialog ---------- */
+.p-dialog {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  color: var(--text) !important;
+  animation: screenWake 0.25s ease-out;
+}
+.p-dialog .p-dialog-header, .p-dialog .p-dialog-content, .p-dialog .p-dialog-footer {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+.p-dialog-mask.p-component-overlay {
+  background: rgba(10, 11, 20, 0.65) !important;
+  backdrop-filter: blur(4px);
+}

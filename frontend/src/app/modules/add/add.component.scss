@@ -1,0 +1,62 @@
+.page-header {
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.4s ease-out;
+  h2 { margin: 0.15rem 0 0; font-size: 1.5rem; }
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 680px;
+  animation: fadeUp 0.5s ease-out 0.1s backwards;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  animation: fadeUp 0.4s ease-out backwards;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.2s; }
+  &:nth-child(5) { animation-delay: 0.25s; }
+
+  input, textarea, .p-inputnumber { width: 100%; }
+
+  small.text-danger {
+    color: var(--danger);
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+  }
+}
+
+.span-2 { grid-column: span 2; }
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .span-2 { grid-column: span 1; }
+  .form-card { padding: 1.25rem; }
+}

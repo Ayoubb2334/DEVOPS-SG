@@ -1,0 +1,40 @@
+.app-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.signal-mark {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+
+  span {
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    border-radius: 2px;
+    transform-origin: bottom;
+    animation: signalRise 1.2s ease-in-out infinite alternate;
+  }
+  span:nth-child(1) { height: 6px;  animation-delay: 0s; }
+  span:nth-child(2) { height: 11px; animation-delay: 0.15s; }
+  span:nth-child(3) { height: 16px; animation-delay: 0.3s; }
+  span:nth-child(4) { height: 20px; animation-delay: 0.45s; }
+}
