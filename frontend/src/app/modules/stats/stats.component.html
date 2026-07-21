@@ -1,0 +1,56 @@
+<div class="page-header">
+  <div>
+    <span class="eyebrow">Vue d'ensemble</span>
+    <h2>Statistiques</h2>
+  </div>
+</div>
+
+<div *ngIf="!loading; else skeleton">
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <i class="pi pi-mobile"></i>
+      <div>
+        <span class="kpi-value">{{ totalProduits }}</span>
+        <span class="kpi-label">Produits au catalogue</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <i class="pi pi-box"></i>
+      <div>
+        <span class="kpi-value">{{ totalStock }}</span>
+        <span class="kpi-label">Unités en stock</span>
+      </div>
+    </div>
+    <div class="kpi-card accent">
+      <i class="pi pi-wallet"></i>
+      <div>
+        <span class="kpi-value">{{ valeurTotale | number:'1.0-0' }} €</span>
+        <span class="kpi-label">Valeur totale du stock</span>
+      </div>
+    </div>
+    <div class="kpi-card" [class.danger]="stockFaibleCount > 0">
+      <i class="pi pi-exclamation-triangle"></i>
+      <div>
+        <span class="kpi-value">{{ stockFaibleCount }}</span>
+        <span class="kpi-label">Produits en stock faible</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Répartition par marque</h3>
+      <p-chart type="bar" [data]="brandChartData" [options]="brandChartOptions" height="260px"></p-chart>
+    </div>
+    <div class="chart-card">
+      <h3>État du stock</h3>
+      <p-chart type="doughnut" [data]="stockChartData" [options]="stockChartOptions" height="260px"></p-chart>
+    </div>
+  </div>
+</div>
+
+<ng-template #skeleton>
+  <div class="kpi-grid">
+    <div class="kpi-card skeleton-block" *ngFor="let i of [1,2,3,4]"></div>
+  </div>
+</ng-template>

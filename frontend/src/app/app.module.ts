@@ -11,6 +11,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { ChartModule } from 'primeng/chart';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +23,7 @@ import { WelcomeComponent } from './modules/welcome/welcome.component';
 import { ListComponent } from './modules/list/list.component';
 import { AddComponent } from './modules/add/add.component';
 import { EditComponent } from './modules/edit/edit.component';
+import { StatsComponent } from './modules/stats/stats.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { EditComponent } from './modules/edit/edit.component';
     WelcomeComponent,
     ListComponent,
     AddComponent,
-    EditComponent
+    EditComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +51,8 @@ import { EditComponent } from './modules/edit/edit.component';
     InputNumberModule,
     ToastModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    ChartModule
   ],
   providers: [MessageService, ConfirmationService],
   bootstrap: [AppComponent]

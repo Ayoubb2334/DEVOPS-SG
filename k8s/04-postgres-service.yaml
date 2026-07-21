@@ -1,0 +1,14 @@
+# ClusterIP = accessible uniquement depuis l'intérieur du cluster (pas exposé à l'extérieur)
+# Le nom "postgres" devient l'adresse DNS interne : postgres.smartphone-app.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: smartphone-app
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

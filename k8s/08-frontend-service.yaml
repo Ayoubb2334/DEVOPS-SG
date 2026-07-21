@@ -1,0 +1,13 @@
+# LoadBalancer : avec Docker Desktop, ça se mappe automatiquement sur localhost
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: smartphone-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80

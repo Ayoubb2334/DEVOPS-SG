@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Smartphone } from '../../core/models/smartphone.model';
 import { SmartphoneService } from '../../core/services/smartphone.service';
+import { PdfExportService } from '../../core/services/pdf-export.service';
 
 @Component({
   selector: 'app-list',
@@ -17,7 +18,8 @@ export class ListComponent implements OnInit {
     private smartphoneService: SmartphoneService,
     private router: Router,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private pdfExportService: PdfExportService
   ) {}
 
   ngOnInit(): void {
@@ -65,5 +67,13 @@ export class ListComponent implements OnInit {
         });
       }
     });
+  }
+
+  onExportPdf(): void {
+    this.pdfExportService.exportCatalogue(this.smartphones);
+  }
+
+  onExportFiche(smartphone: Smartphone): void {
+    this.pdfExportService.exportFiche(smartphone);
   }
 }

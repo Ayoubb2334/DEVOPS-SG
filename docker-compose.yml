@@ -23,12 +23,15 @@ services:
       dockerfile: Dockerfile
     container_name: smartphone-backend
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     environment:
       PG_HOST: database
       PG_PORT: 5432
       PG_DATABASE: ${POSTGRES_DB}
       PG_USERNAME: ${POSTGRES_USER}
       PG_PASSWORD: ${POSTGRES_PASSWORD}
+      ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       database:
         condition: service_healthy
