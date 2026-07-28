@@ -1,0 +1,65 @@
+﻿namespace: smartphone-app
+
+postgres:
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  replicas: 1
+  storage: 1Gi
+  credentials:
+    database: smartphonedb
+    username: postgres
+    password: postgres
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+backend:
+  image:
+    repository: smartphone-app-backend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicas: 2
+  port: 8080
+  environment: Production
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+  probes:
+    readiness:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 15
+
+frontend:
+  image:
+    repository: smartphone-app-frontend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicas: 2
+  port: 80
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
