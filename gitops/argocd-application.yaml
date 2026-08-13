@@ -1,0 +1,18 @@
+﻿apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: smartphone-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Ayoubb2334/DEVOPS-SG.git
+    targetRevision: HEAD
+    path: smartphone-app-chart
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: smartphone-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
