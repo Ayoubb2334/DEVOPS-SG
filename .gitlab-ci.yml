@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - security
   - docker
   - deploy
 
@@ -9,6 +10,8 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
+include:
+  - template: Security/SAST.gitlab-ci.yml
 
 # ---------------------------------------------------------
 # BUILD - Backend (.NET)
@@ -115,4 +118,27 @@ deploy:
         --set frontend.image.tag=$CI_COMMIT_SHORT_SHA
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-      when: manual
+      when: manual 
+# ---------------------------------------------------------
+# SECURITY - Trivy scan (backend image)
+# ---------------------------------------------------------
+trivy-backend:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table $BACKEND_IMAGE:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  needs: ["docker-backend"]
+
+# ---------------------------------------------------------
+# SECURITY - Trivy scan (frontend image)
+# ---------------------------------------------------------
+trivy-frontend:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table $FRONTEND_IMAGE:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  needs: ["docker-frontend"]
