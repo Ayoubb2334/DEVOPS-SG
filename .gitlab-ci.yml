@@ -124,19 +124,22 @@ deploy:
 # ---------------------------------------------------------
 trivy-backend:
   stage: security
-  image: aquasec/trivy:latest
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
   script:
     - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table $BACKEND_IMAGE:$CI_COMMIT_SHORT_SHA
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   needs: ["docker-backend"]
-
 # ---------------------------------------------------------
 # SECURITY - Trivy scan (frontend image)
 # ---------------------------------------------------------
 trivy-frontend:
   stage: security
-  image: aquasec/trivy:latest
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
   script:
     - trivy image --exit-code 0 --severity HIGH,CRITICAL --format table $FRONTEND_IMAGE:$CI_COMMIT_SHORT_SHA
   rules:
