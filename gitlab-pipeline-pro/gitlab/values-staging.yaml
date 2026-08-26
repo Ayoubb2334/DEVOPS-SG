@@ -1,0 +1,16 @@
+# Surcharge de valeurs pour l'environnement STAGING
+# Usage : helm upgrade --install mon-app-staging ./smartphone-app-chart -f gitlab/values-staging.yaml
+
+namespace: smartphone-app-staging
+
+backend:
+  replicas: 1
+  environment: Development   # Swagger activé en staging pour faciliter les tests
+
+frontend:
+  replicas: 1
+  service:
+    type: ClusterIP   # pas de LoadBalancer en staging, on accède via port-forward
+
+postgres:
+  storage: 500Mi

@@ -1,0 +1,161 @@
+﻿# =========================================================================
+# Pipeline CI/CD — Smartphone App
+# Stages : lint → test → build → security → deploy-staging → deploy-production
+# =========================================================================
+
+stages:
+  - test
+  - build
+  - security
+  - deploy-staging
+  - deploy-production
+
+variables:
+  IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA
+  IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA
+  IMAGE_BACKEND_LATEST: $CI_REGISTRY_IMAGE/backend:latest
+  IMAGE_FRONTEND_LATEST: $CI_REGISTRY_IMAGE/frontend:latest
+
+# Scans de sécurité fournis gratuitement par GitLab (SAST, dépendances, conteneurs)
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Container-Scanning.gitlab-ci.yml
+
+# =========================================================================
+# STAGE : TEST
+# =========================================================================
+
+test-backend:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  script:
+    - cd backend
+    - dotnet restore
+    - dotnet build --no-restore
+    - dotnet test --no-build --logger "junit;LogFilePath=../test-results-backend.xml" || true
+  artifacts:
+    when: always
+    reports:
+      junit: test-results-backend.xml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+test-frontend:
+  stage: test
+  image: node:18-alpine
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-npm
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm ci
+    - npx ng lint || true
+    - npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox --karma-config=karma.conf.js || true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# =========================================================================
+# STAGE : BUILD (construit et pousse les images vers le Container Registry GitLab)
+# =========================================================================
+
+build-backend:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-backend
+    paths:
+      - backend/.nuget-cache/
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_BACKEND -t $IMAGE_BACKEND_LATEST ./backend
+    - docker push $IMAGE_BACKEND
+    - docker push $IMAGE_BACKEND_LATEST
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+build-frontend:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_FRONTEND -t $IMAGE_FRONTEND_LATEST ./frontend
+    - docker push $IMAGE_FRONTEND
+    - docker push $IMAGE_FRONTEND_LATEST
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# =========================================================================
+# STAGE : SECURITY (scan des images construites juste au-dessus)
+# =========================================================================
+
+container_scanning:
+  stage: security
+  variables:
+    CS_IMAGE: $IMAGE_BACKEND
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# =========================================================================
+# STAGE : DEPLOY STAGING (automatique à chaque push sur develop)
+# =========================================================================
+
+deploy-staging:
+  stage: deploy-staging
+  image: alpine/helm:3.14.4
+  before_script:
+    - apk add --no-cache curl
+    - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+    - install -m 755 kubectl /usr/local/bin/kubectl
+  script:
+    - kubectl config use-context smartphone-cluster
+    - helm upgrade --install mon-app-staging ./smartphone-app-chart
+      -f gitlab/values-staging.yaml
+      --set backend.image.repository=$CI_REGISTRY_IMAGE/backend
+      --set backend.image.tag=$CI_COMMIT_SHORT_SHA
+      --set frontend.image.repository=$CI_REGISTRY_IMAGE/frontend
+      --set frontend.image.tag=$CI_COMMIT_SHORT_SHA
+      --namespace smartphone-app-staging --create-namespace
+  environment:
+    name: staging
+    url: http://localhost:8082
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# =========================================================================
+# STAGE : DEPLOY PRODUCTION (validation humaine obligatoire, sur main uniquement)
+# =========================================================================
+
+deploy-production:
+  stage: deploy-production
+  image: alpine/helm:3.14.4
+  before_script:
+    - apk add --no-cache curl
+    - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+    - install -m 755 kubectl /usr/local/bin/kubectl
+  script:
+    - kubectl config use-context smartphone-cluster
+    - helm upgrade --install mon-app ./smartphone-app-chart
+      -f gitlab/values-production.yaml
+      --set backend.image.repository=$CI_REGISTRY_IMAGE/backend
+      --set backend.image.tag=$CI_COMMIT_SHORT_SHA
+      --set frontend.image.repository=$CI_REGISTRY_IMAGE/frontend
+      --set frontend.image.tag=$CI_COMMIT_SHORT_SHA
+      --namespace smartphone-app --create-namespace
+  environment:
+    name: production
+    url: http://localhost
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"

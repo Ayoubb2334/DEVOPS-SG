@@ -1,0 +1,22 @@
+# Surcharge de valeurs pour l'environnement PRODUCTION
+# Usage : helm upgrade --install mon-app ./smartphone-app-chart -f gitlab/values-production.yaml
+
+namespace: smartphone-app
+
+backend:
+  replicas: 2
+  environment: Production   # Swagger désactivé en production
+
+frontend:
+  replicas: 2
+  service:
+    type: LoadBalancer
+
+postgres:
+  storage: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
